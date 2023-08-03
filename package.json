@@ -1,0 +1,14 @@
+{
+  "name": "audee-feedgen",
+  "version": "1.0.0",
+  "description": "generate rss feed of audee program",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Takami Hirata",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.36.2"
+  }
+}
