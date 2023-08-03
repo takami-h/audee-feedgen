@@ -31,10 +31,6 @@ class EpisodePage {
   async audioUrl() {
     return await this.audioUrlEl.getAttribute('src');
   }
-  async duration() {
-    const el = await this.audioUrlEl.elementHandle();
-    return el.asElement().duration;
-  }
 }
 
 module.exports = EpisodePage;
