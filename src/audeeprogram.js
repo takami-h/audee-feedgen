@@ -52,10 +52,11 @@ async function findProgram(programUrl) {
 
   /** @type {Item[]} */
   const items = [];
-  const urls = await programPage.allEpisodeUrls();
 
-  for (const url of urls) {
-    console.log(`start ${url}`);
+  const urls = await programPage.allEpisodeUrls();
+  console.log(`${urls.length} episodes found`);
+
+  for (const [index, url] of Object.entries(urls)) {
     const episodePage = new EpisodePage(page);
     await episodePage.goto(url);
 
@@ -65,6 +66,11 @@ async function findProgram(programUrl) {
       publishedAt: await episodePage.publishedAt(),
       audioUrl: await episodePage.audioUrl()
     });
+
+    const seq = parseInt(index) + 1;
+    if (seq % 5 === 0 || seq === urls.length) {
+      console.log(`${seq} / ${urls.length}`);
+    }
   }
   await browser.close();
 

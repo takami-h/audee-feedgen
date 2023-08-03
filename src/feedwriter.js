@@ -45,7 +45,8 @@ async function writeFeed(filename, {channel, items}) {
   </rss>
     `;
 
-  await fs.writeFileSync('audee-podcast.xml', feed);
+  console.log(`save feed as '${filename}'`);
+  await fs.writeFileSync(filename, feed);
 }
 
 module.exports = {

@@ -5,6 +5,7 @@ const validProgramUrlPattern = new RegExp('^https://audee.jp/program/show/.+$');
 
 async function main(args) {
   const programUrl = args[0];
+  const feedFilename = args[1] || 'audee-podcast.xml';
   if (!programUrl || !validProgramUrlPattern.test(programUrl)) {
     console.error('specify url like https://audee.jp/program/show/12345');
     process.exit(1);
@@ -13,7 +14,7 @@ async function main(args) {
 
   const audeeProgram = await findProgram(programUrl);
 
-  await writeFeed('audee-podcast.xml', audeeProgram);
+  await writeFeed(feedFilename, audeeProgram);
 }
 
 main(process.argv.slice(2));

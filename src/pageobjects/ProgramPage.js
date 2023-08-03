@@ -53,7 +53,8 @@ class ProgramPage {
     while (true) {
       const urlsAtPage = await Promise.all((await this.urlsAtPageEl.all()).map(a => a.getAttribute('href')));
       urls = urls.concat(urlsAtPage);
-      console.log(`${urls.length} episode urls`);
+
+      // ページ送りの次へ（>）リンクが無くなるまで1ページずつ進める
       if (await this.nextLinkEl.isVisible()) {
         await this.nextLinkEl.click();
         // ページがロードされるまで待つ
