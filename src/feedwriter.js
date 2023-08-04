@@ -18,6 +18,7 @@ async function writeFeed(filename, {channel, items}) {
     <enclosure url="${i.audioUrl}" length="0" type="audio/mp3"/>
     <itunes:author>${channel.author}</itunes:author>
     <itunes:subtitle>${i.title}</itunes:subtitle>
+    <itunes:duration>${i.duration}</itunes:duration>
     <itunes:explicit>no</itunes:explicit>
     <media:thumbnail url="${channel.thumbnailUrl}"/>
   </item>`;

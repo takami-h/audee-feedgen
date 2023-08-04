@@ -31,6 +31,12 @@ class EpisodePage {
   async audioUrl() {
     return await this.audioUrlEl.getAttribute('src');
   }
+  async duration() {
+    return await this.page.evaluate(() => {
+      return document.getElementById('jfn-audio').duration;
+    });
+    
+  }
 }
 
 module.exports = EpisodePage;
