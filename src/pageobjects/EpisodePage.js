@@ -3,6 +3,7 @@ class EpisodePage {
   titleEl;
   publishedAtEl;
   audioUrlEl;
+  descriptionEl;
 
   /**
    * 
@@ -12,6 +13,7 @@ class EpisodePage {
     this.page = page;
 
     this.titleEl = page.locator('.ttl-inner');
+    this.descriptionEl = page.locator('.txt-detail');
     this.publishedAtEl = page.locator('.txt-date-01');
     this.audioUrlEl = page.locator('#jfn-audio');
   }
@@ -22,6 +24,9 @@ class EpisodePage {
 
   async title() {
     return (await this.titleEl.innerText()).split('\n')[1];
+  }
+  async description() {
+    return (await this.descriptionEl.innerHTML());
   }
   async publishedAt() {
     const dateStr = await this.publishedAtEl.innerText();

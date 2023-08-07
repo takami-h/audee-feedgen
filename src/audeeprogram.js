@@ -17,6 +17,7 @@ const EpisodePage = require('./pageobjects/EpisodePage');
  * @typedef Item
  * @property {string} episodeUrl
  * @property {string} title
+ * @property {string} description
  * @property {string} publishedAt
  * @property {string} duration
  * @property {string} audioUrl
@@ -64,6 +65,7 @@ async function findProgram(programUrl) {
     items.push({
       episodeUrl: url,
       title: await episodePage.title(),
+      description: await episodePage.description(),
       publishedAt: await episodePage.publishedAt(),
       duration: await episodePage.duration(),
       audioUrl: await episodePage.audioUrl()

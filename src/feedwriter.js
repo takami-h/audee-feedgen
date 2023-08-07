@@ -13,7 +13,7 @@ async function writeFeed(filename, {channel, items}) {
     <title>${i.title}</title>
     <link>${i.episodeUrl}</link>
     <pubDate>${i.publishedAt}</pubDate>
-    <description>${i.title}</description>
+    <description><![CDATA[${i.description}]]></description>
     <guid isPermaLink="true">${i.episodeUrl}</guid>
     <enclosure url="${i.audioUrl}" length="0" type="audio/mp3"/>
     <itunes:author>${channel.author}</itunes:author>
