@@ -18,8 +18,8 @@ const EpisodePage = require('./pageobjects/EpisodePage');
  * @property {string} episodeUrl
  * @property {string} title
  * @property {string} description
- * @property {string} publishedAt
- * @property {string} duration
+ * @property {Date} publishedAt
+ * @property {number} duration
  * @property {string} audioUrl
  */
 
@@ -59,17 +59,7 @@ async function findProgram(programUrl) {
   console.log(`${urls.length} episodes found`);
 
   for (const [index, url] of Object.entries(urls)) {
-    const episodePage = new EpisodePage(page);
-    await episodePage.goto(url);
-
-    items.push({
-      episodeUrl: url,
-      title: await episodePage.title(),
-      description: await episodePage.description(),
-      publishedAt: await episodePage.publishedAt(),
-      duration: await episodePage.duration(),
-      audioUrl: await episodePage.audioUrl()
-    });
+    await pushItemInto(items, url, page);
 
     const seq = parseInt(index) + 1;
     if (seq % 5 === 0 || seq === urls.length) {
@@ -81,6 +71,27 @@ async function findProgram(programUrl) {
   return {
     channel, items
   };
+}
+
+/** @type {(items: Item[], url: string, page: import('playwright').Page) => Promise<void>} */
+async function pushItemInto(items, url, page) {
+  const episodePage = new EpisodePage(page);
+  await episodePage.goto(url);
+  const voices = await episodePage.voices();
+  for (const [voiceIndex, voice] of Object.entries(voices)) {
+    // 1エピソードに複数mp3あるとき、1秒ずつずらして時系列順に並べる
+    const publishedAt = await episodePage.publishedAt();
+    publishedAt.setSeconds(publishedAt.getSeconds() + parseInt(voiceIndex));
+
+    items.push({
+      episodeUrl: url,
+      title: await episodePage.title(),
+      description: await episodePage.description(),
+      publishedAt,
+      duration: voice.duration,
+      audioUrl: voice.audioUrl
+    });
+  }
 }
 
 module.exports = {

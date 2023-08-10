@@ -30,17 +30,37 @@ class EpisodePage {
   }
   async publishedAt() {
     const dateStr = await this.publishedAtEl.innerText();
-    const date = new Date(dateStr);
-    return date.toUTCString();
+    return new Date(dateStr);
   }
   async audioUrl() {
     return await this.audioUrlEl.getAttribute('src');
   }
+  /** @type {() => Promise<number>} */
   async duration() {
     return await this.page.evaluate(() => {
       return document.getElementById('jfn-audio').duration;
     });
     
+  }
+
+  /**
+   * @typedef {Object} Voice
+   * @property {string} audioUrl
+   * @property {number} duration
+   */
+
+  /** @type {() => Promise<Voice[]>} */
+  async voices() {
+    const voiceEls = await this.page.locator('.list-voice a').all();
+
+    const voices = [];
+    for (const voiceEl of voiceEls) {
+      await voiceEl.click();
+      const audioUrl = await this.audioUrl();
+      const duration = await this.duration();
+      voices.push({audioUrl, duration});
+    }
+    return voices;
   }
 }
 
