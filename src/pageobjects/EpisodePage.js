@@ -56,6 +56,9 @@ class EpisodePage {
     const voices = [];
     for (const voiceEl of voiceEls) {
       await voiceEl.click();
+      // durationがNaNのことがあるので待ち時間を入れている
+      await this.page.waitForTimeout(200);
+
       const audioUrl = await this.audioUrl();
       const duration = await this.duration();
       voices.push({audioUrl, duration});
