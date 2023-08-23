@@ -46,6 +46,7 @@ class ProgramPage {
     return await this.thumbnailUrlEl.getAttribute('src');
   }
 
+  /** @type {() => Promise<string[]>} */
   async allEpisodeUrls() {
     await this.page.locator('#tab_voice').click();
 

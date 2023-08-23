@@ -29,6 +29,9 @@ const EpisodePage = require('./pageobjects/EpisodePage');
  * @property {Item[]} items
  */
 
+/** @type {number} */
+const BATCH_SIZE = 20;
+
 /**
  * fetch audee program data.
  * @param {string} programUrl 
@@ -56,15 +59,21 @@ async function findProgram(programUrl) {
   const items = [];
 
   const urls = await programPage.allEpisodeUrls();
-  console.log(`${urls.length} episodes found`);
+  const episodeCount = urls.length;
+  console.log(`${episodeCount} episodes found`);
 
-  for (const [index, url] of Object.entries(urls)) {
-    await pushItemInto(items, url, page);
+  const processedUrls = [];
+  while (urls.length > 0) {
+    const batchUrls = urls.splice(0, BATCH_SIZE);
+    /** @type {Promise<Item[]>[]} */
+    const fetchings = batchUrls.map(url => {
+      return fetchItems(url, context);
+    });
+    const itemsFetched = await Promise.all(fetchings).then(i => i.flat());
+    items.push(...itemsFetched);
 
-    const seq = parseInt(index) + 1;
-    if (seq % 5 === 0 || seq === urls.length) {
-      console.log(`${seq} / ${urls.length}`);
-    }
+    processedUrls.push(...batchUrls);
+    console.log(`${processedUrls.length} / ${episodeCount}`);
   }
   await browser.close();
 
@@ -73,8 +82,12 @@ async function findProgram(programUrl) {
   };
 }
 
-/** @type {(items: Item[], url: string, page: import('playwright').Page) => Promise<void>} */
-async function pushItemInto(items, url, page) {
+/** @type {(url: string, context: import('playwright').BrowserContext) => Promise<Item[]>} */
+async function fetchItems(url, context) {
+  /** @type {Item[]} */
+  const items = [];
+
+  const page = await context.newPage();
   const episodePage = new EpisodePage(page);
   await episodePage.goto(url);
   const voices = await episodePage.voices();
@@ -92,6 +105,9 @@ async function pushItemInto(items, url, page) {
       audioUrl: voice.audioUrl
     });
   }
+
+  await page.close();
+  return items;
 }
 
 module.exports = {

@@ -12,9 +12,11 @@ async function main(args) {
     return;
   }
 
+  const start = Date.now();
   const audeeProgram = await findProgram(programUrl);
 
   await writeFeed(feedFilename, audeeProgram);
+  console.log(`feed generated in ${Date.now() - start}ms`);
 }
 
 main(process.argv.slice(2));
