@@ -54,10 +54,13 @@ class EpisodePage {
     const voiceEls = await this.page.locator('.list-voice a').all();
 
     const voices = [];
-    for (const voiceEl of voiceEls) {
-      await voiceEl.click();
-      // durationがNaNのことがあるので待ち時間を入れている
-      await this.page.waitForTimeout(200);
+    for (const [voiceIndex, voiceEl] of Object.entries(voiceEls)) {
+      // 2件目からクリック・待ち
+      if (parseInt(voiceIndex) > 0) {
+        await voiceEl.click();
+        // durationがNaNのことがあるので待ち時間を入れている
+        await this.page.waitForTimeout(200);
+      }
 
       const audioUrl = await this.audioUrl();
       const duration = await this.duration();
