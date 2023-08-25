@@ -37,6 +37,9 @@ class EpisodePage {
   }
   /** @type {() => Promise<number>} */
   async duration() {
+    await this.page.waitForFunction(() => {
+      return !Number.isNaN(document.getElementById('jfn-audio').duration);
+    });
     return await this.page.evaluate(() => {
       return document.getElementById('jfn-audio').duration;
     });
@@ -58,8 +61,6 @@ class EpisodePage {
       // 2件目からクリック・待ち
       if (parseInt(voiceIndex) > 0) {
         await voiceEl.click();
-        // durationがNaNのことがあるので待ち時間を入れている
-        await this.page.waitForTimeout(200);
       }
 
       const audioUrl = await this.audioUrl();
