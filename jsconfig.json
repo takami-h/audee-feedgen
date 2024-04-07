@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "checkJs": true,
     "module": "es2015",
     "moduleResolution": "node",
-    "types": ["webdriverio/async"]
+    "types": ["webdriverio/async"],
+    "lib": ["DOM", "ES2019"]
   },
   "exclude": ["node_modules"]
 }
