@@ -8,7 +8,6 @@ const EpisodePage = require('./pageobjects/EpisodePage');
  * @property {string} programUrl
  * @property {string} title
  * @property {string} description
- * @property {string} keywords
  * @property {string} author
  * @property {string} thumbnailUrl
  */
@@ -50,7 +49,6 @@ async function findProgram(programUrl) {
     programUrl,
     title: await programPage.title(),
     description: await programPage.description(),
-    keywords: await programPage.keywords(),
     author: await programPage.author(),
     thumbnailUrl: await programPage.thumbnailUrl()
   };

@@ -29,12 +29,10 @@ async function writeFeed(filename, {channel, items}) {
       <link>${channel.programUrl}</link>
       <title>${channel.title}</title>
       <description>${channel.description}</description>
-      <media:keywords>${channel.keywords}</media:keywords>
       <language>ja</language>
       <itunes:subtitle>${channel.description}</itunes:subtitle>
       <itunes:author>${channel.author}</itunes:author>
       <itunes:summary>${channel.description}</itunes:summary>
-      <itunes:keywords>${channel.keywords}</itunes:keywords>
       <itunes:owner>
         <itunes:name>${channel.author}</itunes:name>
       </itunes:owner>
