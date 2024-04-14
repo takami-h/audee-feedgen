@@ -50,6 +50,7 @@ class ProgramPage {
   async allEpisodeUrls() {
     await this.page.locator('#tab_voice').click();
 
+    /** @type string[] */
     let urls = [];
     while (true) {
       const urlsAtPage = await Promise.all((await this.urlsAtPageEl.all()).map(a => a.getAttribute('href')));
@@ -65,7 +66,7 @@ class ProgramPage {
       }
     }
 
-    return urls;
+    return urls.sort().reverse();
   }
 }
 
