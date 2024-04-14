@@ -66,7 +66,7 @@ class ProgramPage {
       }
     }
 
-    return urls.sort().reverse();
+    return urls.sort();
   }
 }
 
