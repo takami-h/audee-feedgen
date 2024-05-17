@@ -56,21 +56,21 @@ async function findProgram(programUrl) {
   /** @type {Item[]} */
   const items = [];
 
-  const urls = await programPage.allEpisodeUrls();
-  const episodeCount = urls.length;
+  const indexUrls = (await programPage.allEpisodeUrls()).map((url, index) => {return {index, url}});
+  const episodeCount = indexUrls.length;
   console.log(`${episodeCount} episodes found`);
 
   const processedUrls = [];
-  while (urls.length > 0) {
-    const batchUrls = urls.splice(0, BATCH_SIZE);
+  while (indexUrls.length > 0) {
+    const batchIndexUrls = indexUrls.splice(0, BATCH_SIZE);
     /** @type {Promise<Item[]>[]} */
-    const fetchings = batchUrls.map(url => {
-      return fetchItems(url, context);
+    const fetchings = batchIndexUrls.map(indexUrl => {
+      return fetchItems(indexUrl, context);
     });
     const itemsFetched = await Promise.all(fetchings).then(i => i.flat());
     items.push(...itemsFetched);
 
-    processedUrls.push(...batchUrls);
+    processedUrls.push(...batchIndexUrls);
     console.log(`${processedUrls.length} / ${episodeCount}`);
   }
   await browser.close();
@@ -80,8 +80,8 @@ async function findProgram(programUrl) {
   };
 }
 
-/** @type {(url: string, context: import('playwright').BrowserContext) => Promise<Item[]>} */
-async function fetchItems(url, context) {
+/** @type {(indexUrl: {index: number, url: string}, context: import('playwright').BrowserContext) => Promise<Item[]>} */
+async function fetchItems({index, url}, context) {
   /** @type {Item[]} */
   const items = [];
 
@@ -92,7 +92,7 @@ async function fetchItems(url, context) {
   for (const [voiceIndex, voice] of Object.entries(voices)) {
     // 1エピソードに複数mp3あるとき、1秒ずつずらして時系列順に並べる
     const publishedAt = await episodePage.publishedAt();
-    publishedAt.setSeconds(publishedAt.getSeconds() + parseInt(voiceIndex));
+    publishedAt.setSeconds(publishedAt.getSeconds() + index + parseInt(voiceIndex));
 
     items.push({
       episodeUrl: url,
