@@ -90,9 +90,6 @@ async function fetchItems({index, url}, context) {
   await episodePage.goto(url);
   const voices = await episodePage.voices();
   for (const [voiceIndex, voice] of Object.entries(voices)) {
-    // 1エピソードに複数mp3あるとき、1秒ずつずらして時系列順に並べる
-    const publishedAt = await episodePage.publishedAt();
-    publishedAt.setSeconds(publishedAt.getSeconds() + index + parseInt(voiceIndex));
 
     items.push({
       episodeUrl: url,
