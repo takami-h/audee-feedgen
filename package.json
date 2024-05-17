@@ -9,6 +9,7 @@
   "author": "Takami Hirata",
   "license": "ISC",
   "dependencies": {
+    "luxon": "^3.4.4",
     "playwright": "^1.36.2"
   }
 }

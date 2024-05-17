@@ -98,7 +98,7 @@ async function fetchItems(url, context) {
       episodeUrl: url,
       title: await episodePage.title(),
       description: await episodePage.description(),
-      publishedAt,
+      publishedAt: voice.publishedAt,
       duration: voice.duration,
       audioUrl: voice.audioUrl
     });

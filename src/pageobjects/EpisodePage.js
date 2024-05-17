@@ -1,8 +1,10 @@
+const {Duration} = require('luxon');
+
 class EpisodePage {
   page;
   titleEl;
   publishedAtEl;
-  audioUrlEl;
+  jsonLd;
   descriptionEl;
 
   /**
@@ -15,7 +17,7 @@ class EpisodePage {
     this.titleEl = page.locator('.ttl-inner');
     this.descriptionEl = page.locator('.txt-detail');
     this.publishedAtEl = page.locator('.txt-date-01');
-    this.audioUrlEl = page.locator('#jfn-audio');
+    this.jsonLd = page.locator('script[type="application/ld+json"]').nth(1);
   }
 
   async goto(episodeUrl) {
@@ -28,46 +30,27 @@ class EpisodePage {
   async description() {
     return (await this.descriptionEl.innerHTML());
   }
-  async publishedAt() {
-    const dateStr = await this.publishedAtEl.innerText();
-    return new Date(dateStr);
-  }
-  async audioUrl() {
-    return await this.audioUrlEl.getAttribute('src');
-  }
-  /** @type {() => Promise<number>} */
-  async duration() {
-    await this.page.waitForFunction(() => {
-      return !Number.isNaN(document.getElementById('jfn-audio').duration);
-    });
-    return await this.page.evaluate(() => {
-      return document.getElementById('jfn-audio').duration;
-    });
-    
-  }
 
   /**
    * @typedef {Object} Voice
    * @property {string} audioUrl
    * @property {number} duration
+   * @property {Date} publishedAt
    */
 
   /** @type {() => Promise<Voice[]>} */
   async voices() {
-    const voiceEls = await this.page.locator('.list-voice a').all();
-
-    const voices = [];
-    for (const [voiceIndex, voiceEl] of Object.entries(voiceEls)) {
-      // 2件目からクリック・待ち
-      if (parseInt(voiceIndex) > 0) {
-        await voiceEl.click();
-      }
-
-      const audioUrl = await this.audioUrl();
-      const duration = await this.duration();
-      voices.push({audioUrl, duration});
-    }
-    return voices;
+    const json = await this.jsonLd.innerText()
+    /** @type {Object[]} */
+    const records = JSON.parse(json);
+    const podcastEpisode = records.find(each => each['@type'] === 'PodcastEpisode');
+    return podcastEpisode.audio.map(each => {
+      return {
+        audioUrl: each.contentUrl,
+        duration: Duration.fromISO(each.duration).as('seconds'),
+        publishedAt: new Date(each.uploadDate)
+      };
+    });
   }
 }
 
