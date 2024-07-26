@@ -66,6 +66,9 @@ class ProgramPage {
       }
     }
 
+    urls = urls.filter((url, index, arr) => {
+      return arr.includes(url)
+    })
     return urls.sort();
   }
 }
