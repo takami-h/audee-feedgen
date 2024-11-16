@@ -20,8 +20,15 @@ class EpisodePage {
     this.jsonLd = page.locator('script[type="application/ld+json"]').nth(1);
   }
 
-  async goto(episodeUrl) {
-    await this.page.goto(episodeUrl);
+  async goto(episodeUrl, retryCount = 5) {
+    try {
+      await this.page.goto(episodeUrl);
+    } catch (error) {
+      console.error(error);
+      if (retryCount > 0) {
+        await this.goto(episodeUrl, retryCount - 1);
+      }
+    }
   }
 
   async title() {
